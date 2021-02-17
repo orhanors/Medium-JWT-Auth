@@ -1,0 +1,19 @@
+.comment-container {
+	background-color: white;
+	border: 1px solid gray;
+	width: 100%;
+	padding: 1.5rem;
+	word-wrap: break-word;
+}
+
+.btn-primary {
+	color: black !important;
+	background-color: transparent !important;
+	border-color: transparent !important;
+	.focus {
+		box-shadow: transparent !important;
+	}
+	&:focus {
+		box-shadow: transparent !important;
+	}
+}
