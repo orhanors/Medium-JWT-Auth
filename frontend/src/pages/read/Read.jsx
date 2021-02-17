@@ -87,12 +87,6 @@ class Read extends Component {
 	};
 
 	// HADLE REACTIONS
-	handleClap = async (e) => {
-		const userId = getLocalStorage("user")._id;
-		const result = await postClaps(this.articleId, userId);
-		console.log("clap result", result);
-		this.setState({ clapSize: this.state.clapSize + 1 });
-	};
 
 	// VIEWS
 	showReviewList = () => {
@@ -147,13 +141,11 @@ class Read extends Component {
 				<p>{article?.content}</p>
 
 				<Reactions
-					handleClap={this.handleClap}
 					info={{
 						textValue: this.state.review.text,
 
 						reviewSize: this.state.reviewList.length,
 						articleId: this.articleId,
-						claps: this.state.article?.claps,
 					}}
 					handleReviewSubmit={this.handleReviewSubmit}
 					handleReviewChange={this.handleReviewChange}

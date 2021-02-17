@@ -16,7 +16,7 @@ function Signin(props) {
 		if (isAuthenticated() && isAuthenticated().role === 1) {
 			//if admin tries to go to signin page even if he logged in, redirect him to admin page
 			history.push("/admin/dashboard");
-		} else if (isAuthenticated() && isAuthenticated().role === 0) {
+		} else if (isAuthenticated()) {
 			history.push("/");
 		}
 	}, [history]);
@@ -60,7 +60,11 @@ function Signin(props) {
 			//If there is an error incoming response
 			signin(body)
 				.then((response) => {
-					setAuth(response.data.token, response.data.user);
+					setAuth(
+						response.data.token,
+						response.data.refreshToken,
+						response.data.user
+					);
 
 					if (isAuthenticated() && isAuthenticated().role === 1) {
 						//redirect admin page
@@ -83,6 +87,7 @@ function Signin(props) {
 				});
 		}
 	};
+
 	const showSignupFrom = () => {
 		return (
 			<Form onSubmit={handleSubmit} noValidate>
@@ -114,30 +119,62 @@ function Signin(props) {
 			</Form>
 		);
 	};
+	const showLoginForm = () => {
+		return (
+			<div className='d-flex flex-column'>
+				<div className='login-input-wrap mb-4'>
+					<p className='login-label mb-0'>Email</p>
+					<input
+						type='email'
+						name='email'
+						onChange={handleChange}
+						value={email}></input>
+				</div>
+				<div className='login-input-wrap mb-2'>
+					<p className='login-label mb-0'>Password</p>
+					<input
+						type='password'
+						name='password'
+						onChange={handleChange}
+						value={password}></input>
+				</div>
+				<Link
+					className='forgot-password mb-4'
+					to='/login/forgotpassword'>
+					Forgot Password?
+				</Link>
+				{errorMsg && (
+					<small className='mb-2 mt-0 text-danger text-center'>
+						{errorMsg}
+					</small>
+				)}
 
+				<button onClick={handleSubmit} className='sign-in-btn'>
+					Sign in
+				</button>
+			</div>
+		);
+	};
 	return (
-		<div className='signup-form'>
-			<Container>
-				<h3 className='text-center'>Login</h3>
-				<Row>
-					<Col md={12}>{showSignupFrom()}</Col>
-					{errorMsg && (
-						<Col md={12} className='mt-3'>
-							{showErrorMessage(errorMsg)}
-						</Col>
-					)}
-
-					<Col md={12}>
-						<p className='sub-info'>
-							Don't have an account?
-							<span>
-								{"  "}
-								<Link to='/auth/signup'>SingUp</Link>
-							</span>
-						</p>
-					</Col>
-				</Row>
-			</Container>
+		<div
+			id='login-main-container'
+			className='d-flex flex-column justify-content-center align-items-center'>
+			<div>
+				<div className='login-content-container mb-5'>
+					<div className='mb-4'>
+						<h2 className='mb-1'>Sign in</h2>
+					</div>
+					{showLoginForm()}
+				</div>
+				<div className='text-center'>
+					<p>
+						Don't have an account?{" "}
+						<Link to='/auth/signup' className='font-weight-bold'>
+							Join now
+						</Link>
+					</p>
+				</div>
+			</div>
 		</div>
 	);
 }

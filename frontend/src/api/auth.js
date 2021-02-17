@@ -1,4 +1,24 @@
 import axios from "axios";
+// import createAuthRefreshInterceptor from "axios-auth-refresh";
+// import { getCookie, setCookie } from "../helpers/cookies";
+
+// const refreshAuthLogic = (failedRequest) =>
+// 	axios
+// 		.post(`${process.env.REACT_APP_BE_DEV_URL}/auth/refreshToken`, {
+// 			refreshToken: getCookie("refreshToken"),
+// 		})
+// 		.then((tokenRefreshResponse) => {
+// 			console.log("hjfkjdslkfjd");
+// 			setCookie("refreshToken", tokenRefreshResponse.data.refreshToken);
+
+// 			setCookie("token", tokenRefreshResponse.data.token);
+
+// 			failedRequest.response.config.headers["Authorization"] =
+// 				"Bearer " + tokenRefreshResponse.data.refreshToken;
+// 			return Promise.resolve();
+// 		});
+
+// createAuthRefreshInterceptor(axios, refreshAuthLogic);
 
 export const signup = async (data) => {
 	const config = {
@@ -38,6 +58,6 @@ export const signin = async (data) => {
 		data,
 		config
 	);
-
+	console.log("Signin response is : ", response.data);
 	return response;
 };

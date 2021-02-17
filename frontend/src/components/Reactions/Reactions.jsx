@@ -6,21 +6,9 @@ import { Button } from "react-bootstrap";
 import "./styles.scss";
 import { getLocalStorage } from "../../helpers/localStorage";
 export default function Reactions(props) {
-	const handleClapsChange = (e) => {
-		const claps = props.info.claps;
-		for (let clap of claps) {
-			if (getLocalStorage("user")._id.localeCompare(clap)) {
-				console.log("yeyeyyeyey");
-				e.target.style.pointerEvents = "none";
-			}
-		}
-	};
 	const showClaps = () => {
 		return (
-			<div
-				onMouseOver={handleClapsChange}
-				onClick={props.handleClap}
-				className='clap'>
+			<div className='clap'>
 				<svg
 					width='33'
 					height='33'

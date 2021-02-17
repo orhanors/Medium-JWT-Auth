@@ -18,9 +18,9 @@ const ArticleSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
-ArticleSchema.virtual("clapSize").get(function () {
-	return this.claps.length;
-});
+// ArticleSchema.virtual("clapSize").get(function () {
+// 	return this.claps.length;
+// });
 
 const Article = mongoose.model("Article", ArticleSchema);
 

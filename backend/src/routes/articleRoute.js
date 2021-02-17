@@ -15,6 +15,7 @@ const {
 	articleReviewDeleteController,
 	articleClapsController,
 } = require("../controller/articleReactionsController");
+const { authorize } = require("../middlewares/auth");
 const {
 	articleBodyValidator,
 	validatorResult,
@@ -30,6 +31,7 @@ articleRouter.post(
 	"/",
 	articleBodyValidator,
 	validatorResult,
+	authorize,
 	articlePostController
 );
 articleRouter.put("/", articlePutController);

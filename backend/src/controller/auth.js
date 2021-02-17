@@ -3,7 +3,8 @@ const bcryp = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { jwtSecret, jwtExpire } = require("../config/keys");
 const ApiError = require("../classes/ApiError");
-exports.signupController = async (req, res) => {
+const { authenticate, handleRefreshToken } = require("../helpers/jwt");
+exports.signupController = async (req, res, next) => {
 	const { email } = req.body;
 
 	try {
@@ -21,43 +22,38 @@ exports.signupController = async (req, res) => {
 	}
 };
 
-exports.signinController = async (req, res) => {
-	const { email, password } = req.body;
-
+exports.signinController = async (req, res, next) => {
 	try {
-		const user = await db.Author.findOne({ email });
-
-		//Check if the user exist
-		if (!user) throw new ApiError(400, "Invalid Credentials");
-
-		console.log("Name of the user", user.fullName);
-		//Compare plain password and hashed password
-		const isPasswordMatched = await bcryp.compare(password, user.password);
-		if (!isPasswordMatched) throw new ApiError(400, "Invalid Credentials");
-
-		//Create jwt payload
-		const payload = {
-			user: user._id,
-		};
-
-		//Create token and send both token and user
-		jwt.sign(
-			payload,
-			jwtSecret,
-			{ expiresIn: jwtExpire },
-			function (err, token) {
-				if (err) console.log("jwt error", err);
-
-				const { _id, name, surname, username, email, role } = user;
-
-				res.json({
-					token,
-					user: { _id, name, surname, username, email, role },
-				});
-			}
-		);
+		const { email, password } = req.body;
+		const user = await db.Author.findByCredentials(email, password);
+		if (!user) throw new ApiError(400, "Invalid email or password");
+		const { token, refreshToken } = await authenticate(user);
+		res.status(201).json({ token, refreshToken, user });
 	} catch (error) {
 		console.log("SigninController error: ", error);
 		next(error);
 	}
 };
+
+exports.refreshTokenController = async (req, res, next) => {
+	try {
+		const oldRefreshToken = req.body.refreshToken;
+		if (!oldRefreshToken)
+			throw new ApiError(400, "Refresh token is required");
+
+		//Give old token and take new "access" and "refresh" token
+		const newTokens = await handleRefreshToken(oldRefreshToken);
+		res.status(201).json(newTokens);
+	} catch (error) {
+		console.log("RefreshTokenController error: ", error);
+		next(new ApiError(403, error.message));
+	}
+};
+
+/**
+ * 
+				res.json({
+					token,
+					user: { _id, name, surname, username, email, role },
+				});
+ */

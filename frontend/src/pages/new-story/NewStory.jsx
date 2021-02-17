@@ -41,6 +41,9 @@ export default class NewStory extends Component {
 
 			this.props.history.push("/stories");
 		} else {
+			// if (result.errors == "Unauthorized") {
+			// 	this.props.history.push("/auth/login");
+			// }
 			this.setState({ errorMsg: result.errors, showSuccessMsg: false });
 		}
 	};

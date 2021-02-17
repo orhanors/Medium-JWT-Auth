@@ -35,6 +35,8 @@ exports.reviewBodyValidator = [
 ];
 
 exports.signupValidator = [
+	check("name").notEmpty().trim().withMessage("Name is required"),
+	check("surname").notEmpty().trim().withMessage("Surname required"),
 	check("username").notEmpty().trim().withMessage("All fields are required"),
 	check("email").isEmail().normalizeEmail().withMessage("Invalid Email"),
 	check("password")

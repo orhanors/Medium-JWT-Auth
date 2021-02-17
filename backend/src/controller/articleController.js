@@ -19,7 +19,7 @@ exports.articleGetByAuthorIdController = async (req, res, next) => {
 		}).populate("author");
 
 		if (articles)
-			return res.status(OK).json({ success: true, data: articles });
+			return res.status(200).json({ success: true, data: articles });
 
 		throw new ApiError(404, "Author ID Not Found");
 	} catch (error) {
