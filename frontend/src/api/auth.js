@@ -1,24 +1,5 @@
 import axios from "axios";
-// import createAuthRefreshInterceptor from "axios-auth-refresh";
-// import { getCookie, setCookie } from "../helpers/cookies";
-
-// const refreshAuthLogic = (failedRequest) =>
-// 	axios
-// 		.post(`${process.env.REACT_APP_BE_DEV_URL}/auth/refreshToken`, {
-// 			refreshToken: getCookie("refreshToken"),
-// 		})
-// 		.then((tokenRefreshResponse) => {
-// 			console.log("hjfkjdslkfjd");
-// 			setCookie("refreshToken", tokenRefreshResponse.data.refreshToken);
-
-// 			setCookie("token", tokenRefreshResponse.data.token);
-
-// 			failedRequest.response.config.headers["Authorization"] =
-// 				"Bearer " + tokenRefreshResponse.data.refreshToken;
-// 			return Promise.resolve();
-// 		});
-
-// createAuthRefreshInterceptor(axios, refreshAuthLogic);
+import { getCookie } from "../helpers/cookies";
 
 export const signup = async (data) => {
 	const config = {
@@ -42,7 +23,6 @@ export const signup = async (data) => {
 			return response.data;
 		}
 	} catch (error) {
-		console.log("Error in signup fetching", error);
 		console.log("error response data", error.response.data);
 		return error.response.data;
 	}
@@ -58,6 +38,23 @@ export const signin = async (data) => {
 		data,
 		config
 	);
-	console.log("Signin response is : ", response.data);
+
+	return response;
+};
+
+export const logoutApiCall = async () => {
+	const config = {
+		headers: {
+			"Content-type": "application/json",
+		},
+		withCredentials: true,
+	};
+	const data = { refreshToken: getCookie("refreshToken") };
+	const response = await axios.post(
+		`${process.env.REACT_APP_BE_DEV_URL}/auth/logoutAll`,
+		data,
+		config
+	);
+	console.log("Logout response is : ", response.data);
 	return response;
 };

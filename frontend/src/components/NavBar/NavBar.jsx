@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import {
 	Navbar,
 	Nav,
@@ -16,16 +16,18 @@ import {
 import { Link, withRouter } from "react-router-dom";
 import { isAuthenticated, logout } from "../../helpers/auth";
 const NavBar = (props) => {
-	const handleLogout = () => {
-		logout(() => {
+	const handleLogout = async () => {
+		await logout(() => {
 			props.history.push("/auth/login");
 		});
 	};
-
+	useEffect(() => {
+		console.log("navbgarrr:: ", isAuthenticated());
+	}, []);
 	const showDropDownMenu = () => {
 		return (
 			<Dropdown.Menu>
-				{isAuthenticated() ? (
+				{!isAuthenticated() ? (
 					<>
 						<Dropdown.Item as={Link} to='/new-story'>
 							Write a story

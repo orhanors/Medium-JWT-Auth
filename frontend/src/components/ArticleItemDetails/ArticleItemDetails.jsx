@@ -1,6 +1,7 @@
 import React from "react";
 import { getLocalStorage } from "../../helpers/localStorage";
 import "./styles.scss";
+import { Link } from "react-router-dom";
 class ArticleItemDetails extends React.Component {
 	authorFullName = () => {
 		return (
@@ -20,13 +21,13 @@ class ArticleItemDetails extends React.Component {
 					/>
 
 					<span className={"author"}>
-						<a href='/'>
+						<Link to='/'>
 							<b>{this.authorFullName()} </b> in{" "}
 							<b>Better Advice</b>
-						</a>
+						</Link>
 					</span>
 				</div>
-				<a href='/'>
+				<Link to='/'>
 					<span
 						className={"heading"}
 						style={{
@@ -41,12 +42,12 @@ class ArticleItemDetails extends React.Component {
 						}}>
 						{this.props.article.headLine}
 					</span>
-				</a>
+				</Link>
 
 				{this.props.subheading && (
 					<div className={"subheading"}>
 						<p>
-							<a href='/'>{this.props.article.subHead}</a>
+							<Link to='/'>{this.props.article.subHead}</Link>
 						</p>
 					</div>
 				)}

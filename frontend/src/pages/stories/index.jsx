@@ -24,7 +24,7 @@ const Stories = () => {
 			<div>
 				{articles?.map((article, index) => {
 					return (
-						<Link to={`/read/${article._id}`}>
+						<Link to={`/read/${article._id}`} key={index}>
 							<ArticleListItem
 								key={index}
 								articleImg={"left"}

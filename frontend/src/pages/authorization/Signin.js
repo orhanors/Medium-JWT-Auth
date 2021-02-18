@@ -3,10 +3,11 @@ import { Form, Container, Row, Col } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import isEmail from "validator/lib/isEmail";
 import isEmpty from "validator/lib/isEmpty";
-import { showErrorMessage } from "../../helpers/messages";
+
 import { signin } from "../../api/auth";
 import { isAuthenticated, setAuth } from "../../helpers/auth";
 import "./auth.scss";
+import Oauth from "./Oauth/Oauth";
 
 function Signin(props) {
 	let history = useHistory();
@@ -164,6 +165,7 @@ function Signin(props) {
 					<div className='mb-4'>
 						<h2 className='mb-1'>Sign in</h2>
 					</div>
+					<Oauth />
 					{showLoginForm()}
 				</div>
 				<div className='text-center'>

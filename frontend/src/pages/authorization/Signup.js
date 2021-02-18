@@ -8,6 +8,7 @@ import isEmpty from "validator/lib/isEmpty";
 import { signup } from "../../api/auth";
 import "./auth.scss";
 import { showsuccessMessage, showErrorMessage } from "../../helpers/messages";
+import Oauth from "./Oauth/Oauth";
 function Signup(props) {
 	const [formData, setFormData] = useState({
 		name: "",
@@ -180,6 +181,7 @@ function Signup(props) {
 					<div className='mb-4'>
 						<h2 className='mb-1'>Sign up</h2>
 					</div>
+					<Oauth />
 					{showSignupForm2()}
 				</div>
 			</div>

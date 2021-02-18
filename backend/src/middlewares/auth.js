@@ -4,7 +4,7 @@ const ApiError = require("../classes/ApiError");
 
 const authorize = async (req, res, next) => {
 	try {
-		const token = req.header("Authorization").replace("Bearer ", "");
+		const token = req.cookies.token;
 		const decoded = await verifyJWT(token);
 		const user = await Author.findOne({
 			_id: decoded._id,

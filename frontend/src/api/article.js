@@ -1,12 +1,14 @@
 import axios from "axios";
 
 import createAuthRefreshInterceptor from "axios-auth-refresh";
+
 import { getCookie, setCookie } from "../helpers/cookies";
 
 const { REACT_APP_BE_DEV_URL } = process.env;
+
 const refreshAuthLogic = (failedRequest) =>
 	axios
-		.post(`${process.env.REACT_APP_BE_DEV_URL}/auth/refreshToken`, {
+		.post(`${REACT_APP_BE_DEV_URL}/auth/refreshToken`, {
 			refreshToken: getCookie("refreshToken"),
 		})
 		.then((tokenRefreshResponse) => {
@@ -26,8 +28,8 @@ export const publishArticle = async (article) => {
 	const config = {
 		headers: {
 			"Content-type": "application/json",
-			Authorization: "Bearer " + getCookie("token"),
 		},
+		withCredentials: true,
 	};
 
 	try {

@@ -28,7 +28,8 @@ exports.signinController = async (req, res, next) => {
 		const user = await db.Author.findByCredentials(email, password);
 		if (!user) throw new ApiError(400, "Invalid email or password");
 		const { token, refreshToken } = await generateTokens(user);
-		res.status(201).json({ token, refreshToken, user });
+		res.cookie("token", token);
+		res.cookie("refreshToken", token);
 	} catch (error) {
 		console.log("SigninController error: ", error);
 		next(error);
@@ -37,7 +38,7 @@ exports.signinController = async (req, res, next) => {
 
 exports.refreshTokenController = async (req, res, next) => {
 	try {
-		const oldRefreshToken = req.body.refreshToken;
+		const oldRefreshToken = req.cookies.refreshToken;
 		if (!oldRefreshToken)
 			throw new ApiError(400, "Refresh token is required");
 
@@ -68,6 +69,8 @@ exports.logoutAllController = async (req, res, next) => {
 	try {
 		req.user.refreshTokens = [];
 		await req.user.save();
+		res.clearCookie("token");
+		res.clearCookie("refreshToken");
 		res.send("OK");
 	} catch (error) {
 		console.log("LogoutAll error: ", error);
@@ -94,5 +97,19 @@ exports.googleRedirectController = async (req, res, next) => {
 	} catch (error) {
 		console.log("Google redirect controller error: ", error);
 		next(error);
+	}
+};
+
+exports.facebookRedirectController = async (req, res, next) => {
+	try {
+		const { token, refreshToken } = req.user.tokens;
+		res.cookie("token", token, { httpOnly: true });
+		res.cookie("refreshToken", refreshToken, {
+			httpOnly: true,
+			path: "/auth/refreshToken",
+		});
+		res.redirect(process.env.REDIRECT_URL);
+	} catch (error) {
+		console.log("Facebook redirect controller error: ", error);
 	}
 };
