@@ -4,12 +4,18 @@ const bcryp = require("bcrypt");
 const AuthorSchema = new mongoose.Schema({
 	name: { type: String, required: true },
 	surname: { type: String, required: true },
-	username: { type: String },
 	email: { type: String, required: true },
-	password: { type: String, required: true },
+	password: { type: String },
 	isPremium: { type: Boolean, default: false },
 	savedArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Article" }],
 	refreshTokens: [{ token: String }],
+	googleId: { type: String },
+	facebookId: { type: String },
+	image: {
+		type: String,
+		default:
+			"https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+	},
 	//articles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Article" }],
 	//clapsedArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Article" }],
 });

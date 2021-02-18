@@ -3,7 +3,7 @@ const bcryp = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { jwtSecret, jwtExpire } = require("../config/keys");
 const ApiError = require("../classes/ApiError");
-const { authenticate, handleRefreshToken } = require("../helpers/jwt");
+const { generateTokens, handleRefreshToken } = require("../helpers/jwt");
 exports.signupController = async (req, res, next) => {
 	const { email } = req.body;
 
@@ -27,7 +27,7 @@ exports.signinController = async (req, res, next) => {
 		const { email, password } = req.body;
 		const user = await db.Author.findByCredentials(email, password);
 		if (!user) throw new ApiError(400, "Invalid email or password");
-		const { token, refreshToken } = await authenticate(user);
+		const { token, refreshToken } = await generateTokens(user);
 		res.status(201).json({ token, refreshToken, user });
 	} catch (error) {
 		console.log("SigninController error: ", error);
@@ -50,10 +50,49 @@ exports.refreshTokenController = async (req, res, next) => {
 	}
 };
 
-/**
- * 
-				res.json({
-					token,
-					user: { _id, name, surname, username, email, role },
-				});
- */
+exports.logoutController = async (req, res, next) => {
+	try {
+		req.user.refreshTokens = req.user.refreshTokens.filter(
+			(t) => t.token !== req.body.refreshToken
+		);
+
+		await req.user.save();
+		res.send("OK");
+	} catch (err) {
+		console.log("Logout error: ", err);
+		next(err);
+	}
+};
+
+exports.logoutAllController = async (req, res, next) => {
+	try {
+		req.user.refreshTokens = [];
+		await req.user.save();
+		res.send("OK");
+	} catch (error) {
+		console.log("LogoutAll error: ", error);
+		next(error);
+	}
+};
+
+//--------------------------
+//OAUTH
+
+exports.googleRedirectController = async (req, res, next) => {
+	try {
+		const { token, refreshToken } = req.user.tokens;
+		//Passport adds req.user object
+		//inside of req.user we can grab tokens
+		//After grabbing tokens we can send as cookie
+		res.cookie("token", token, { httpOnly: true });
+		res.cookie("refreshToken", refreshToken, {
+			httpOnly: true,
+			path: "/auth/refreshToken",
+		});
+
+		res.status(200).redirect(process.env.REDIRECT_URL);
+	} catch (error) {
+		console.log("Google redirect controller error: ", error);
+		next(error);
+	}
+};

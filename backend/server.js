@@ -4,14 +4,16 @@ const articleRouter = require("./src/routes/articleRoute");
 const authorRouter = require("./src/routes/authorRoute");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+dotenv.config();
 const authRouter = require("./src/routes/authRoute");
 const {
 	notFoundHandler,
 	genericErrorHandler,
 } = require("./src/helpers/errorHandling");
-
+const passport = require("passport");
+const oauth = require("./src/middlewares/oauth");
+const cookieParser = require("cookie-parser");
 const server = express();
-dotenv.config();
 
 const port = process.env.PORT || 3001;
 const mongodbUri = process.env.MONGODB_URI;
@@ -24,9 +26,24 @@ mongoose
 	.then(() => console.log("Connected to DB"))
 	.catch((err) => console.log("DB Connection Error! ", err));
 
+//CORS SETTINGS
+
+const whitelist = [process.env.REDIRECT_URL];
+const corsOptions = {
+	origin: (origin, callback) => {
+		if (whitelist.indexOf(origin) !== -1 || !origin) {
+			callback(null, true);
+		} else {
+			callback(new Error("Not allowed by CORS"));
+		}
+	},
+	credentials: true, //Allow cookie
+};
 //SETTING UP MIDDLEWARES
-server.use(cors());
+server.use(cors(corsOptions));
 server.use(express.json());
+server.use(cookieParser());
+server.use(passport.initialize());
 
 //ROUTES
 server.use("/articles", articleRouter);

@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const Author = require("../models").Author;
 const { jwtSecret, jwtRefreshSecret } = require("../config/keys");
 const ApiError = require("../classes/ApiError");
-const authenticate = async (user) => {
+const generateTokens = async (user) => {
 	try {
 		const newAccessToken = await generateJWT({ _id: user._id });
 		const newRefreshToken = await generateRefreshJWT({ _id: user._id });
@@ -86,4 +86,4 @@ const verifyRefreshToken = (token) =>
 		})
 	);
 
-module.exports = { authenticate, verifyJWT, handleRefreshToken };
+module.exports = { generateTokens, verifyJWT, handleRefreshToken };

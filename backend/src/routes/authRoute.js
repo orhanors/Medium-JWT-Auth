@@ -1,8 +1,12 @@
 const express = require("express");
+const passport = require("passport");
 const {
 	signupController,
 	signinController,
 	refreshTokenController,
+	logoutController,
+	logoutAllController,
+	googleRedirectController,
 } = require("../controller/auth");
 const { authorize } = require("../middlewares/auth");
 const {
@@ -19,16 +23,19 @@ authRouter.post("/signin", signinValidator, validatorResult, signinController);
 
 authRouter.post("/refreshToken", refreshTokenController);
 
-authRouter.post("/logout", authorize, async (req, res, next) => {
-	try {
-		req.user.refreshTokens = req.user.refreshTokens.filter(
-			(t) => t.token !== req.body.refreshToken
-		);
-		await req.user.save();
-		res.send();
-	} catch (err) {
-		next(err);
-	}
-});
+authRouter.post("/logout", authorize, logoutController);
+authRouter.post("/logoutAll", authorize, logoutAllController);
 
+//OAUTH
+authRouter.get(
+	"/googleLogin",
+	passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+//NOTE Passport middleware adds "req.user" property to request object
+authRouter.get(
+	"/googleRedirect",
+	passport.authenticate("google"),
+	googleRedirectController
+);
 module.exports = authRouter;
